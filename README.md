@@ -1,4 +1,4 @@
-# Rusty Cage
+# Bedrock for MacOS 28+ a.k.a Rusty Cage
 
 Experimental attempt to run the officially licensed Microsoft Minecraft Bedrock Edition for Windows on macOS 28+.
 
@@ -7,3 +7,149 @@ Experimental attempt to run the officially licensed Microsoft Minecraft Bedrock 
 Rusty Cage is a Rust-first experimental launcher. It does not redistribute Minecraft or vendor runtime payloads. Users must provide their own legitimately obtained copy and comply with Microsoft and Apple terms.
 
 The macOS 28 compatibility path is not implemented or verified. The project does not claim to replace Wine, Rosetta, or a Windows ARM runtime until the complete supported path is validated.
+
+## The rest is from bedrock-mac. need to update as well 
+
+Run your owned **Minecraft for Windows (Bedrock)** on an Apple Silicon Mac,
+using WineGDK, DXMT, and Xodus. The current launcher is native macOS; the
+Windows game runs through Wine and Rosetta. No CrossOver subscription is
+required. Setup gets you to vanilla Minecraft, which keeps its own worlds,
+packs, settings and friends menus.
+
+**Open-source preview.** Build scripts are available now; there is no public
+notarized app or downloadable installer. Local app candidates have separate
+[release checks](docs/RELEASE.md).
+
+Download the current source release:
+[0.3.0 source preview 6](https://github.com/1JRobertson/bedrock-mac/releases/tag/v0.3.0-source.6).
+It fixes a content licensing failure and adds Store country settings to the
+native launcher.
+
+| Status | Evidence and limits |
+| --- | --- |
+| **Working in development** | Local-world save/reopen and Xbox/PlayStation friend play recorded on an M4 Pro Mac mini, 24 GB RAM, macOS 15.3.1. These are [historical sessions](docs/history/GAMEPLAY.md#earlier-gameplay-results), not current-bundle qualification. |
+| **Experimental** | Opt-in [Mullion ray tracing](experiments/mullion/RESULTS.md) rendered a proof world on the M4 Pro. Limited feature support; no general DirectX 12 conformance or long-session guarantee. |
+| **Not verified** | Clean-Mac source setup, current packaged-candidate save/reopen and multiplayer, live update/recovery, and party creation/invites/joining with the compiled party fix. See [compatibility](docs/COMPATIBILITY.md) and [release gates](docs/RELEASE.md). |
+
+Apple Silicon and macOS 15+ are the source target. The current game runtime
+requires x86-64 translation; macOS 28 compatibility is unverified because
+Apple has announced a narrower Rosetta role there. An M1 Air, 16 GB, is
+[reported working](docs/COMPATIBILITY.md), without a recorded OS/revision or
+clean-install qualification. Start with [source setup](#start-from-source).
+
+The macOS 28 Windows ARM route is still a feasibility investigation, not a
+playable adapter. Use open-source supporting components where practical.
+Downloading or using proprietary vendor components requires the user's own
+license and manually enabled acceptance in [EULA.md](EULA.md); this does not
+replace Microsoft ownership checks. The existing Wine/Rosetta path remains the
+default. See the
+[migration status](docs/COMPATIBILITY.md#macos-28-and-windows-11-arm).
+
+Before setup can download or use Minecraft or Microsoft's proprietary runtime
+components, review `EULA.md` and change
+`PROPRIETARY_COMPONENTS_ACCEPTED = false` to `true`. It is disabled by default;
+keep the local change out of commits. The file is separate from the unchanged
+GPL `LICENSE`.
+
+## Start from source
+
+On an **Apple Silicon Mac with macOS 15 or later**:
+
+1. Clone this repository, or choose **Code → Download ZIP** and extract it.
+2. Keep the folder in a permanent location you control: it holds your game,
+   settings, and saves. Do not replace or delete it when updating source.
+   Source builds require a full path containing only ASCII letters, digits,
+   `/`, `.`, `_`, `+` and `-` (for example, `~/git/bedrock-mac` after expanding `~`).
+   See [build path requirements](docs/DEVELOPMENT.md#build-paths).
+3. Double-click **Start.command**, or run `./Start.command` from Terminal in
+   that folder. Keep Terminal open through setup and play.
+4. Follow the Apple/Homebrew prompts and sign in with the Microsoft account
+   that owns **Minecraft for Windows**. A console/mobile purchase alone is
+   insufficient. If Minecraft asks, select **Sign in now**.
+
+The first run installs missing build tools, fetches pinned sources, compiles
+Wine and the account helper, validates the graphics memory fixes, and downloads
+your owned game. It needs internet access, Rosetta, several GB of downloads,
+and room for source/build outputs as well as the game. Build time and minimum
+build-space requirements have not been measured. Apple Command Line Tools
+installation asks you to press Return when it finishes.
+
+Use **Start.command** again to play. It reuses a complete installation and
+retries interrupted setup; interrupted game downloads restart. It does not
+automatically update an installed game or runtime. Read-only status and
+setup-only commands are available:
+
+```sh
+./Start.command --check
+./Start.command --setup-only
+./Start.command --market US  # Store country; default CA
+```
+
+If macOS blocks opening the script, follow [Apple's opening guidance](https://support.apple.com/en-us/102445)
+after checking the source. A complete first run on a clean Mac still needs
+qualification. See [the build guide](docs/DEVELOPMENT.md) for manual stages,
+packaging and setup failures, and [compatibility](docs/COMPATIBILITY.md) for
+what has actually been observed.
+
+## Locally built app
+
+Developers can [build a complete app and DMG](docs/DEVELOPMENT.md#build-a-complete-local-app).
+Open that DMG, copy **Bedrock for Mac** to **Applications**, then choose
+**Install & Play**. The complete bundle includes its runtime and build outputs;
+players using it do not need build tools. Its data lives separately from the
+source checkout. Follow [the app user guide](docs/USER_GUIDE.md) for sign-in,
+backup and manual update actions. Local RC4's audited minimum OS is 15.0;
+new bundles need their own audit and gameplay qualification.
+
+## What has been tested?
+
+The maintainer estimates **10+ total hours playing with Xbox and PlayStation
+friends** across multiple sessions. Development testing also verified local-world
+saving and reopening. The [gameplay evidence](docs/history/GAMEPLAY.md#repeated-cross-platform-play)
+includes two monitored friend sessions; the cumulative estimate is a maintainer
+report, not a continuous soak test or acceptance of the current app candidate.
+
+Performance work has reduced measured CPU cost in bounded development tests.
+It does **not** establish a cumulative FPS improvement, lower power use, or a
+speedup for the release candidate. [Performance evidence](docs/PERFORMANCE.md)
+explains the measurements and their limits. Native ARM game execution is a
+separate research track, not a feature of this Windows-runtime preview.
+
+An optional [Mullion ray-tracing experiment](experiments/mullion/README.md)
+demonstrated reflections and indirect lighting on the maintainer's M4 Pro Mac
+with macOS 15.3.1. It includes GPU probes and a separate proof world; normal
+startup does not enable it. Read the [results and known limits](experiments/mullion/RESULTS.md)
+before opting in.
+
+## Help and development
+
+The [documentation index and repository map](docs/README.md) separate current
+guides, supported source, build tools, experiments and dated evidence.
+
+| Task | Guide |
+| --- | --- |
+| Use a locally built app, sign in, retry, or resolve Mac prompts | [User guide](docs/USER_GUIDE.md) |
+| Back up worlds, update, restore, or uninstall | [Files and backups](docs/USER_GUIDE.md#your-files-backups-and-updates) |
+| Check hardware and game-feature evidence | [Compatibility](docs/COMPATIBILITY.md) |
+| Review candidate status and known limitations | [Release readiness](docs/RELEASE.md) · [Draft release notes](docs/RELEASE_NOTES.md) |
+| Follow source-preview scope and planned work | [Source preview](docs/SOURCE_PREVIEW.md) · [Roadmap](docs/ROADMAP.md) |
+| Build locally | [Development guide](docs/DEVELOPMENT.md) |
+| Understand the runtime and historical gameplay | [Context](CONTEXT.md) · [Stability notes](docs/STABILITY.md) |
+| Contribute or report a bug | [Contributing](CONTRIBUTING.md) · [Testing](docs/TESTING.md) |
+| Review source exports, licenses, or security | [Publishing](docs/PUBLISHING.md) · [Notices](THIRD_PARTY.md) · [Security](SECURITY.md) |
+| Work with a coding agent | [Agent guidance](AGENTS.md) |
+
+Source-run worlds live in `<checkout>/bottles/Bedrock-Standalone`. Packaged-app
+worlds live outside the application in
+`~/Library/Application Support/Bedrock for Mac/bottles/Bedrock-Standalone`.
+Quit Minecraft normally before backing up or replacing the app. There is no
+automatic app/game updater or supported offline-launch mode. The current source
+adds **Update Minecraft…** for manual game updates; live recovery testing is pending.
+
+Original project code is **GPLv3**; upstream components retain their licenses.
+Built on [WineGDK](https://github.com/Sightem/WineGDK),
+[Wine](https://www.winehq.org/), [DXMT](https://github.com/3Shain/dxmt), and
+[Xodus](https://github.com/xodus-gaming/xodus).
+
+Not affiliated with Microsoft, Mojang, Apple, or CodeWeavers.
+Each player needs their own legitimate Windows-game entitlement.
